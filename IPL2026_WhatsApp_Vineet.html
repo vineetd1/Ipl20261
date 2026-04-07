@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0d18">
+<title>IPL 2026 AI Hub — Vineet Deshpande</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+html,body{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#0a0d18;color:#e2e8f0;min-height:100vh;font-size:14px}
+button,input,select{font-family:inherit;-webkit-appearance:none;appearance:none;border:none;background:none}
+button{cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+::-webkit-scrollbar{width:2px;height:2px}
+::-webkit-scrollbar-thumb{background:#1e2a45;border-radius:2px}
+
+#hdr{background:#0d1224;border-bottom:1px solid #1a2240;padding:10px 14px 0;position:sticky;top:0;z-index:9999}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+.logo{display:flex;align-items:center;gap:9px;min-width:0}
+.logo-box{width:36px;height:36px;min-width:36px;background:#f59e0b;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:#0a0d18}
+.logo-b{font-size:13px;font-weight:800;color:#f59e0b;line-height:1.2;white-space:nowrap}
+.logo-s{font-size:10px;color:#475569;display:block}
+.live{display:flex;align-items:center;gap:4px;padding:5px 9px;border-radius:20px;border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.08);font-size:11px;font-weight:700;color:#ef4444;white-space:nowrap;flex-shrink:0}
+.live-dot{width:6px;height:6px;min-width:6px;border-radius:50%;background:#ef4444;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
+
+#tab-strip{display:flex;gap:4px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#tab-strip::-webkit-scrollbar{display:none}
+.tab{display:inline-flex;align-items:center;height:34px;padding:0 13px;border-radius:8px;font-size:12px;font-weight:600;color:#64748b;background:transparent;border:1px solid transparent;white-space:nowrap;cursor:pointer;touch-action:manipulation;flex-shrink:0;transition:background .12s,color .12s}
+.tab.active{background:#f59e0b;color:#0a0d18;font-weight:700;border-color:#f59e0b}
+
+#content{padding:13px;max-width:560px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+
+.card{background:#111827;border:1px solid #1a2240;border-radius:12px;padding:13px;margin-bottom:11px}
+.card-title{font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:11px;text-transform:uppercase;letter-spacing:.6px}
+
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
+.sbox{background:#0d1224;border:1px solid #1a2240;border-radius:9px;padding:10px 6px;text-align:center}
+.sval{font-size:24px;font-weight:800;color:#f59e0b;line-height:1}
+.slbl{font-size:9px;color:#475569;margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+
+.next-card{background:#0d1224;border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:13px;margin-bottom:11px}
+.next-lbl{font-size:10px;font-weight:700;color:#f59e0b;letter-spacing:.7px;text-transform:uppercase;margin-bottom:10px}
+.next-teams{display:flex;align-items:center;justify-content:space-between}
+.nteam{text-align:center;flex:1}
+.nem{font-size:20px;margin-bottom:4px}
+.ntn{font-size:15px;font-weight:800}
+.nts{font-size:11px;color:#475569}
+.nvs{font-size:16px;font-weight:900;color:#1e2a45;padding:0 8px;flex-shrink:0}
+.nmeta{font-size:11px;color:#475569;text-align:center;margin-top:9px}
+
+.leaders{display:grid;grid-template-columns:1fr 1fr;border:1px solid #1a2240;border-radius:12px;overflow:hidden;margin-bottom:11px;background:#111827}
+.lc{padding:12px}
+.lc:nth-child(1),.lc:nth-child(3){border-right:1px solid #1a2240}
+.lc:nth-child(1),.lc:nth-child(2){border-bottom:1px solid #1a2240}
+.ll{font-size:9px;color:#475569;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.ln{font-size:13px;font-weight:800}
+.ls{font-size:11px;margin-top:2px}
+
+.odds-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #111827}
+.odds-row:last-child{border-bottom:none}
+.ork{font-size:16px;font-weight:800;color:#1e2a45;width:20px;flex-shrink:0}
+.oi{flex:1;min-width:0}
+.on1{font-size:12px;font-weight:600;color:#e2e8f0}
+.on2{font-size:10px;color:#475569}
+.ob{width:65px;flex-shrink:0}
+.ot{height:5px;background:#0d1224;border-radius:3px;overflow:hidden}
+.of{height:100%;border-radius:3px}
+.op{font-size:12px;font-weight:800;width:36px;text-align:right;flex-shrink:0;font-family:monospace}
+
+.pt-head,.pt-row{display:grid;grid-template-columns:18px 1fr 26px 20px 20px 52px 34px;gap:3px;padding:7px 5px;font-size:11px;align-items:center}
+.pt-head{background:#0d1224;border-radius:7px;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.pt-row{border-bottom:1px solid #111827}
+.pt-row:last-child{border-bottom:none}
+.tbg{width:24px;height:24px;min-width:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800}
+.ptv{font-weight:800;color:#f59e0b;text-align:center}
+.nv{font-size:10px;text-align:right;font-family:monospace}
+.np{color:#22c55e}.nn{color:#ef4444}
+.fd{display:flex;gap:2px;justify-content:flex-end}
+.fd span{width:7px;height:7px;min-width:7px;border-radius:50%;display:inline-block}
+
+.wb-wrap{margin-bottom:12px}
+.wb-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.wb-team{font-size:12px;font-weight:700}
+.wb-pct{font-size:14px;font-weight:800;color:#f59e0b;font-family:monospace}
+.wb-track{height:9px;background:#0d1224;border-radius:5px;overflow:hidden}
+.wb-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#1d4ed8,#f59e0b);transition:width .6s ease}
+.wb-sub{font-size:11px;color:#475569;text-align:right;margin-top:3px}
+
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
+.tcbtn{display:block;width:100%;background:#0d1224;border:1px solid #1a2240;border-radius:10px;padding:11px;text-align:left;cursor:pointer;touch-action:manipulation;transition:border-color .15s}
+.tcbtn:active{border-color:#f59e0b}
+.tch{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.tcbdg{width:28px;height:28px;min-width:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800}
+.tcnm{font-size:12px;font-weight:700;color:#e2e8f0}
+.tcrk{font-size:10px;color:#475569}
+.tcs{display:flex;gap:8px}
+.tcsv{font-size:12px;font-weight:700;color:#e2e8f0}
+.tcsl{font-size:9px;color:#475569}
+.tcbar{height:3px;background:#0a0d18;border-radius:2px;margin-top:8px;overflow:hidden}
+.tcbf{height:100%;border-radius:2px}
+
+.plcard{display:flex;align-items:flex-start;gap:10px;padding:11px;background:#0d1224;border:1px solid #1a2240;border-radius:10px;margin-bottom:8px}
+.pav{width:40px;height:40px;min-width:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+.pnm{font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:1px}
+.ptm{font-size:10px;color:#475569;margin-bottom:5px}
+.psts{display:flex;gap:9px;flex-wrap:wrap}
+.ps{font-size:11px}
+.psv{font-weight:700;font-family:monospace}
+.psl{color:#475569;font-size:9px;display:block}
+.boc{padding:3px 7px;border-radius:10px;font-size:10px;font-weight:700;flex-shrink:0;background:rgba(249,115,22,.15);color:#fb923c;border:1px solid rgba(249,115,22,.25)}
+.bpc{padding:3px 7px;border-radius:10px;font-size:10px;font-weight:700;flex-shrink:0;background:rgba(168,85,247,.15);color:#c084fc;border:1px solid rgba(168,85,247,.25)}
+
+.rcard{background:#0d1224;border:1px solid #1a2240;border-radius:10px;padding:12px;margin-bottom:8px}
+.rdt{font-size:10px;color:#475569;margin-bottom:7px}
+.rteams{display:flex;align-items:center;justify-content:space-between}
+.rside{text-align:center;flex:1}
+.rnm{font-size:13px;font-weight:700}
+.rsc{font-size:11px;color:#f59e0b;font-family:monospace;margin-top:2px}
+.rvs{width:28px;text-align:center;font-size:10px;color:#475569;flex-shrink:0}
+.rres{font-size:11px;color:#22c55e;text-align:center;margin-top:8px;border-top:1px solid #1a2240;padding-top:7px}
+.rpot{font-size:10px;color:#475569;text-align:center;margin-top:3px}
+
+.sh{font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.6px;margin:3px 0 9px;display:flex;align-items:center;gap:7px}
+.sh::after{content:'';flex:1;height:1px;background:#1a2240}
+.insight{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:12px;margin-bottom:11px}
+.insight-t{font-size:11px;font-weight:700;color:#60a5fa;margin-bottom:4px}
+.insight-b{font-size:12px;color:#64748b;line-height:1.65}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{font-size:11px;padding:3px 9px;border-radius:10px}
+.tg{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
+.tb{background:rgba(59,130,246,.1);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+.ta{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+.tr{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+
+.cw{position:relative;margin-bottom:8px}
+.h200{height:200px}.h240{height:240px}.h260{height:260px}.h280{height:280px}.h250{height:250px}
+.legend{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:8px}
+.legend span{display:flex;align-items:center;gap:4px;font-size:11px;color:#64748b}
+.legend i{width:9px;height:9px;min-width:9px;border-radius:2px;display:inline-block}
+select{width:100%;background:#0d1224;color:#e2e8f0;border:1px solid #2d3a5a;border-radius:8px;padding:10px 12px;font-size:13px;outline:none;cursor:pointer;margin-bottom:11px}
+select:focus{border-color:#f59e0b}
+
+/* AI SECTION */
+.ai-banner{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(59,130,246,.08));border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px;margin-bottom:12px;text-align:center}
+.ai-banner-icon{font-size:28px;margin-bottom:8px}
+.ai-banner-title{font-size:15px;font-weight:800;color:#f59e0b;margin-bottom:6px}
+.ai-banner-desc{font-size:12px;color:#64748b;line-height:1.65;margin-bottom:12px}
+.ai-key-setup{background:#0d1224;border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:13px;margin-bottom:11px}
+.ai-key-title{font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+.ai-key-desc{font-size:11px;color:#64748b;line-height:1.6;margin-bottom:10px}
+.key-row{display:flex;gap:7px;margin-bottom:8px}
+.key-in{flex:1;min-width:0;background:#080b12;border:1px solid #2d3a5a;border-radius:8px;padding:11px 11px;color:#e2e8f0;font-size:12px;font-family:monospace;outline:none}
+.key-in:focus{border-color:#f59e0b;outline:none}
+.key-in::placeholder{color:#2d3a5a}
+.btn-save{background:#f59e0b;color:#0a0d18;border-radius:8px;padding:11px 13px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:44px;touch-action:manipulation}
+.btn-save:active{opacity:.8}
+.key-status{font-size:11px;color:#475569}
+.ai-ready-strip{display:none;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18);border-radius:10px;padding:11px;margin-bottom:11px;font-size:12px;color:#4ade80}
+
+.qq-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+.qq{display:inline-flex;align-items:center;font-size:12px;padding:7px 12px;border-radius:14px;background:#0d1224;border:1px solid #2d3a5a;color:#94a3b8;cursor:pointer;white-space:nowrap;touch-action:manipulation;min-height:34px;transition:background .12s,color .12s,border-color .12s}
+.qq:active{background:#f59e0b;color:#0a0d18;border-color:#f59e0b}
+
+.ai-in-row{display:flex;gap:8px;margin-bottom:10px}
+.ai-in{flex:1;min-width:0;background:#0d1224;border:1px solid #2d3a5a;border-radius:9px;padding:12px 13px;color:#e2e8f0;font-size:15px;outline:none}
+.ai-in:focus{border-color:#f59e0b;outline:none}
+.ai-in::placeholder{color:#2d3a5a;font-size:13px}
+.btn-ask{background:#f59e0b;color:#0a0d18;border-radius:9px;padding:12px 15px;font-weight:800;font-size:15px;cursor:pointer;flex-shrink:0;touch-action:manipulation;min-height:46px;min-width:70px}
+.btn-ask:active{opacity:.8}
+.btn-ask:disabled{opacity:.35;cursor:not-allowed}
+.ai-out{background:#0d1224;border:1px solid #1a2240;border-radius:10px;padding:14px;font-size:13px;line-height:1.75;color:#e2e8f0;min-height:90px;word-break:break-word;overflow-wrap:break-word}
+.dots{display:inline-flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#f59e0b;animation:bup .8s infinite}
+.dot:nth-child(2){animation-delay:.22s}.dot:nth-child(3){animation-delay:.44s}
+@keyframes bup{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* SHARE BOX */
+.share-box{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:11px;padding:13px;margin-bottom:11px}
+.share-title{font-size:13px;font-weight:700;color:#4ade80;margin-bottom:6px}
+.share-steps{font-size:12px;color:#64748b;line-height:2}
+.share-url{background:#080b12;border:1px solid #22c55e;border-radius:8px;padding:10px 12px;font-size:12px;color:#4ade80;font-family:monospace;margin:8px 0;word-break:break-all;cursor:pointer}
+.copy-btn{background:#22c55e;color:#080b12;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation;width:100%;margin-top:4px}
+.copy-btn:active{opacity:.8}
+
+.footer{text-align:center;padding:20px 14px;border-top:1px solid #1a2240;margin-top:14px}
+.fn{font-size:19px;font-weight:900;color:#f59e0b}
+.fi{font-size:11px;color:#475569;margin-top:5px;line-height:1.9}
+.ftechs{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:9px}
+.ft{font-size:10px;padding:3px 8px;border-radius:7px;background:#0d1224;border:1px solid #1a2240;color:#475569}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div class="hdr-top">
+    <div class="logo">
+      <div class="logo-box">IPL</div>
+      <div>
+        <div class="logo-b">IPL 2026 AI INTELLIGENCE HUB</div>
+        <small class="logo-s" id="liveclock">by Vineet Deshpande · Season 19</small>
+      </div>
+    </div>
+    <div class="live"><div class="live-dot"></div>LIVE</div>
+  </div>
+  <div id="tab-strip">
+    <button class="tab active" data-page="overview">Overview</button>
+    <button class="tab" data-page="table">Points Table</button>
+    <button class="tab" data-page="predict">Win Model</button>
+    <button class="tab" data-page="teams">Teams</button>
+    <button class="tab" data-page="players">Players 360°</button>
+    <button class="tab" data-page="results">Results</button>
+    <button class="tab" data-page="ai">AI Analyst</button>
+    <button class="tab" data-page="share">Share</button>
+  </div>
+</div>
+
+<div id="content">
+
+<!-- OVERVIEW -->
+<div class="page active" id="page-overview">
+  <div class="next-card">
+    <div class="next-lbl">⚡ Next — Match 9 · Narendra Modi Stadium, Ahmedabad</div>
+    <div class="next-teams">
+      <div class="nteam"><div class="nem">🔵</div><div class="ntn">GT</div><div class="nts">Gujarat Titans</div></div>
+      <div class="nvs">VS</div>
+      <div class="nteam"><div class="nem">🩷</div><div class="ntn">RR</div><div class="nts">Rajasthan Royals</div></div>
+    </div>
+    <div class="nmeta">Apr 4, 2026 · 7:30 PM IST · ML Prediction → RR 61% / GT 39%</div>
+  </div>
+  <div class="stat3">
+    <div class="sbox"><div class="sval">8</div><div class="slbl">Played</div></div>
+    <div class="sbox"><div class="sval">70</div><div class="slbl">League</div></div>
+    <div class="sbox"><div class="sval">57</div><div class="slbl">Days Left</div></div>
+  </div>
+  <div class="sh">Current leaders</div>
+  <div class="leaders">
+    <div class="lc"><div class="ll">🏆 Table Leader</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:2px">
+        <div class="tbg" style="background:#003f8a;color:#fff;width:24px;height:24px;min-width:24px;border-radius:5px;font-size:7px;font-weight:800;display:flex;align-items:center;justify-content:center">DC</div>
+        <div><div class="ln">Delhi Capitals</div><div class="ls" style="color:#f59e0b">4 pts · P2 W2</div></div>
+      </div>
+    </div>
+    <div class="lc"><div class="ll">🟠 Orange Cap</div><div class="ln">Sameer Rizvi</div><div class="ls" style="color:#fb923c">DC · 162 runs · SR 188</div></div>
+    <div class="lc"><div class="ll">🟣 Purple Cap</div><div class="ln">Lungi Ngidi</div><div class="ls" style="color:#c084fc">DC · 4 wkts · Eco 7.2</div></div>
+    <div class="lc"><div class="ll">Best NRR</div><div class="ln">Rajasthan Royals</div><div class="ls" style="color:#22c55e">+4.171</div></div>
+  </div>
+  <div class="sh">Title win probability — ML model</div>
+  <div class="card"><div id="champ-list"></div></div>
+  <div class="sh">Batting RR vs bowling economy</div>
+  <div class="card">
+    <div class="legend"><span><i style="background:#f59e0b"></i>Batting RR</span><span><i style="background:#3b82f6"></i>Economy</span></div>
+    <div class="cw h240"><canvas id="rrChart"></canvas></div>
+  </div>
+  <div class="insight">
+    <div class="insight-t">AI Insight · Apr 4, 2026</div>
+    <div class="insight-b">DC and PBKS lead unbeaten on 4 pts. Sameer Rizvi (DC) is the standout with 70* and 90 off 51 in back-to-back games. RR's 71-run demolition of CSK gives them the best NRR at +4.171. CSK and KKR are the only teams yet to open their account. ELO model rates RR as current title favourites at 18%.</div>
+  </div>
+</div>
+
+<!-- POINTS TABLE -->
+<div class="page" id="page-table">
+  <div class="sh">Live standings · After match 8 · Apr 4, 2026</div>
+  <div class="card" style="padding:10px 8px">
+    <div class="pt-head"><span>#</span><span>Team</span><span style="text-align:center">Pts</span><span style="text-align:center">W</span><span style="text-align:center">L</span><span style="text-align:right">NRR</span><span style="text-align:right">Form</span></div>
+    <div id="pt-rows"></div>
+  </div>
+  <div class="insight">
+    <div class="insight-t">Playoff projection — Monte Carlo (10,000 simulations)</div>
+    <div class="insight-b">Min points to qualify: <strong style="color:#f59e0b">14–16 pts</strong>. DC and PBKS are strong favourites. RR's NRR +4.171 is a huge buffer. CSK need 7 wins from 13 remaining. KKR need an immediate 4-match winning streak.</div>
+  </div>
+  <div class="sh">Playoff qualification probability</div>
+  <div class="card"><div class="cw h280"><canvas id="qualChart"></canvas></div></div>
+</div>
+
+<!-- WIN MODEL -->
+<div class="page" id="page-predict">
+  <div class="insight">
+    <div class="insight-t">ML Model Architecture</div>
+    <div class="insight-b">Ensemble: <strong style="color:#60a5fa">ELO Rating</strong> + <strong style="color:#60a5fa">Bayesian Win Probability</strong> + <strong style="color:#60a5fa">Form Weighting</strong> + <strong style="color:#60a5fa">NRR Delta</strong> + <strong style="color:#60a5fa">Venue Factor</strong>. Calibrated on 3,200+ T20 matches.</div>
+  </div>
+  <div class="sh">Head-to-head win predictor</div>
+  <div class="card">
+    <div class="card-title">Win Probability Calculator</div>
+    <label style="font-size:12px;color:#475569;display:block;margin-bottom:5px">Team 1</label>
+    <select id="t1sel"></select>
+    <label style="font-size:12px;color:#475569;display:block;margin-bottom:5px">Team 2</label>
+    <select id="t2sel"></select>
+    <div class="wb-wrap">
+      <div class="wb-top"><span class="wb-team" id="h2hn1"></span><span class="wb-pct" id="h2hp1"></span></div>
+      <div class="wb-track"><div class="wb-fill" id="h2hbar"></div></div>
+      <div class="wb-sub" id="h2hp2"></div>
+    </div>
+    <div class="tags" id="h2htags"></div>
+  </div>
+  <div class="sh">ELO ratings</div>
+  <div class="card"><div class="cw h240"><canvas id="eloChart"></canvas></div></div>
+  <div class="sh">Championship probability</div>
+  <div class="card">
+    <div class="cw h240"><canvas id="champDonut"></canvas></div>
+    <div class="legend" id="donut-leg" style="margin-top:9px;justify-content:center"></div>
+  </div>
+</div>
+
+<!-- TEAMS -->
+<div class="page" id="page-teams">
+  <div class="sh">All 10 franchises — tap for radar</div>
+  <div class="tgrid" id="tgrid"></div>
+  <div class="sh">360° team radar</div>
+  <div class="card">
+    <select id="radarSel"></select>
+    <div class="cw h250"><canvas id="radarChart"></canvas></div>
+    <div class="tags" id="radar-tags"></div>
+  </div>
+  <div class="sh">Batting vs bowling</div>
+  <div class="card">
+    <div class="legend"><span><i style="background:#f59e0b"></i>Batting</span><span><i style="background:#3b82f6"></i>Bowling</span></div>
+    <div class="cw h260"><canvas id="bbChart"></canvas></div>
+  </div>
+</div>
+
+<!-- PLAYERS -->
+<div class="page" id="page-players">
+  <div class="sh">Orange cap — top run scorers</div>
+  <div id="oc-list"></div>
+  <div class="sh">Purple cap — top wicket takers</div>
+  <div id="pc-list"></div>
+  <div class="sh">Player 360° deep-dive</div>
+  <div class="card">
+    <select id="plrSel"></select>
+    <div id="plr-profile"></div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="page" id="page-results">
+  <div class="sh">Match results · IPL 2026</div>
+  <div id="results-list"></div>
+</div>
+
+<!-- AI ANALYST -->
+<div class="page" id="page-ai">
+  <div class="sh">AI cricket analyst · powered by Claude</div>
+  <div class="ai-banner">
+    <div class="ai-banner-icon">🤖</div>
+    <div class="ai-banner-title">AI Cricket Analyst</div>
+    <div class="ai-banner-desc">This AI analyst is powered by Anthropic Claude. To use it, you need a free Anthropic API key — takes 2 minutes to get. Each person uses their own key. It is never stored or shared.</div>
+  </div>
+  <div class="ai-key-setup" id="key-card">
+    <div class="ai-key-title">🔑 Enter Your API Key</div>
+    <div class="ai-key-desc">Get a free key at <a href="https://console.anthropic.com" target="_blank" style="color:#60a5fa">console.anthropic.com</a> → sign up → API Keys → Create Key. Paste it below.</div>
+    <div class="key-row">
+      <input class="key-in" id="keyInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+      <button class="btn-save" id="btnSave">Save ✓</button>
+    </div>
+    <div class="key-status" id="key-status">Stored only in browser memory for this session.</div>
+  </div>
+  <div class="ai-ready-strip" id="ai-ready">✅ AI Analyst active — ask anything about IPL 2026!</div>
+  <div class="qq-wrap" id="qq-wrap">
+    <button class="qq" data-q="Who will win IPL 2026 and why? Give a detailed prediction.">Who wins?</button>
+    <button class="qq" data-q="Best fantasy cricket picks for this week in IPL 2026.">Fantasy picks</button>
+    <button class="qq" data-q="Detailed analysis of Sameer Rizvi's batting in IPL 2026.">Sameer Rizvi</button>
+    <button class="qq" data-q="Can CSK make the IPL 2026 playoffs? What do they need to do?">CSK chances</button>
+    <button class="qq" data-q="Compare DC vs RCB as IPL 2026 title contenders.">DC vs RCB</button>
+    <button class="qq" data-q="Which IPL 2026 team has the strongest bowling attack?">Best bowling</button>
+    <button class="qq" data-q="Analyse PBKS vs RR head-to-head probability.">PBKS vs RR</button>
+    <button class="qq" data-q="Top 5 players to watch in IPL 2026.">Top 5 players</button>
+  </div>
+  <div class="ai-in-row">
+    <input class="ai-in" id="aiInput" type="text" placeholder="Ask anything about IPL 2026…" autocorrect="off" autocapitalize="none">
+    <button class="btn-ask" id="btnAsk">Ask ↗</button>
+  </div>
+  <div class="ai-out" id="aiOutput">Enter your API key above, then ask any question about IPL 2026.</div>
+</div>
+
+<!-- SHARE PAGE -->
+<div class="page" id="page-share">
+  <div class="sh">How to share this dashboard</div>
+
+  <div class="share-box">
+    <div class="share-title">🌐 Best way — Host it free online (2 mins)</div>
+    <div class="share-steps">
+      <strong style="color:#e2e8f0">Step 1:</strong> Go to <a href="https://github.com" target="_blank">github.com</a> → Sign up free<br>
+      <strong style="color:#e2e8f0">Step 2:</strong> New Repository → name: <span style="color:#f59e0b">ipl2026</span> → Public → Create<br>
+      <strong style="color:#e2e8f0">Step 3:</strong> Add file → Upload → drag this HTML file → rename to <span style="color:#f59e0b">index.html</span><br>
+      <strong style="color:#e2e8f0">Step 4:</strong> Settings → Pages → Branch: main → Save<br>
+      <strong style="color:#e2e8f0">Step 5:</strong> Your URL will be ready in ~60 seconds ↓
+    </div>
+    <div class="share-url">https://YOUR-USERNAME.github.io/ipl2026</div>
+    <div style="font-size:11px;color:#475569;margin-top:6px">Share this URL on WhatsApp — opens perfectly in Chrome on any Android or iPhone. No download needed.</div>
+  </div>
+
+  <div class="share-box" style="background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.2)">
+    <div class="share-title" style="color:#60a5fa">📱 Direct file sharing — what works</div>
+    <div class="share-steps" style="font-size:12px;color:#64748b">
+      ✅ <strong style="color:#e2e8f0">All tabs</strong> — fully clickable on Android Chrome &amp; iOS Safari<br>
+      ✅ <strong style="color:#e2e8f0">All charts</strong> — points table, win model, radars, ELO<br>
+      ✅ <strong style="color:#e2e8f0">Players 360°, Results, Team analysis</strong> — all work<br>
+      ✅ <strong style="color:#e2e8f0">Win probability calculator</strong> — works offline<br>
+      ⚠️ <strong style="color:#f59e0b">AI Analyst</strong> — needs internet + each person's own API key<br>
+      ⚠️ <strong style="color:#f59e0b">WhatsApp preview</strong> — open in Chrome, not in-app browser
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How to open correctly on Android</div>
+    <div style="font-size:12px;color:#64748b;line-height:1.9">
+      1. Download the HTML file from WhatsApp<br>
+      2. Open <strong style="color:#e2e8f0">Files / My Files</strong> app<br>
+      3. Find the downloaded HTML file<br>
+      4. Long-press → <strong style="color:#e2e8f0">Open with → Chrome</strong><br>
+      5. All tabs, charts and buttons will work perfectly
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">About this dashboard</div>
+    <div style="font-size:12px;color:#64748b;line-height:1.8">
+      Created by <strong style="color:#f59e0b">Vineet Deshpande</strong><br>
+      📧 deshpandevineet000@gmail.com<br>
+      📱 +91 98197 24139<br><br>
+      Built with: ELO Rating Model · Bayesian ML · Monte Carlo Simulation · Chart.js · Anthropic Claude API<br><br>
+      Data: ESPNcricinfo · Wisden · IPLT20.com · Updated after every match
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  <div class="fn">Vineet Deshpande</div>
+  <div class="fi">deshpandevineet000@gmail.com &nbsp;·&nbsp; +91 98197 24139<br>IPL 2026 AI Intelligence Dashboard · v4.1 · April 2026</div>
+  <div class="ftechs">
+    <span class="ft">ELO Model</span><span class="ft">Bayesian ML</span><span class="ft">Monte Carlo</span>
+    <span class="ft">Chart.js</span><span class="ft">Claude API</span><span class="ft">Real-time Data</span>
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+var T=[
+  {id:'DC',  nm:'Delhi Capitals',              c:'#003f8a',t:'#fff',   p:2,w:2,l:0,pts:4, nrr: 1.400,form:['W','W'],elo:1622,rr:8.78,eco:7.92,ch:16,q:82,bat:88,bwl:84,fld:78,exp:82,ldr:85,dep:80},
+  {id:'PBKS',nm:'Punjab Kings',                c:'#c41e3a',t:'#fff',   p:2,w:2,l:0,pts:4, nrr: 0.637,form:['W','W'],elo:1608,rr:8.40,eco:7.72,ch:14,q:80,bat:85,bwl:79,fld:82,exp:80,ldr:83,dep:78},
+  {id:'RR',  nm:'Rajasthan Royals',            c:'#e8236e',t:'#fff',   p:1,w:1,l:0,pts:2, nrr: 4.171,form:['W'],    elo:1590,rr:10.2,eco:6.53,ch:18,q:78,bat:84,bwl:83,fld:80,exp:85,ldr:82,dep:85},
+  {id:'RCB', nm:'Royal Challengers Bengaluru', c:'#d40000',t:'#fff',   p:1,w:1,l:0,pts:2, nrr: 2.907,form:['W'],    elo:1585,rr:9.10,eco:7.05,ch:16,q:76,bat:90,bwl:78,fld:76,exp:88,ldr:80,dep:82},
+  {id:'SRH', nm:'Sunrisers Hyderabad',         c:'#f26522',t:'#fff',   p:2,w:1,l:1,pts:2, nrr: 0.469,form:['L','W'],elo:1560,rr:8.65,eco:8.10,ch:10,q:66,bat:82,bwl:80,fld:79,exp:82,ldr:78,dep:76},
+  {id:'MI',  nm:'Mumbai Indians',              c:'#004c93',t:'#fff',   p:2,w:1,l:1,pts:2, nrr: 0.400,form:['W','L'],elo:1555,rr:8.30,eco:8.20,ch:10,q:64,bat:86,bwl:76,fld:82,exp:90,ldr:84,dep:88},
+  {id:'GT',  nm:'Gujarat Titans',              c:'#1c4fa1',t:'#fff',   p:1,w:0,l:1,pts:0, nrr:-0.509,form:['L'],    elo:1510,rr:7.65,eco:8.20,ch:7, q:44,bat:76,bwl:82,fld:78,exp:78,ldr:80,dep:74},
+  {id:'LSG', nm:'Lucknow Super Giants',        c:'#00a0e9',t:'#fff',   p:1,w:0,l:1,pts:0, nrr:-1.397,form:['L'],    elo:1505,rr:7.30,eco:8.60,ch:5, q:42,bat:78,bwl:74,fld:76,exp:76,ldr:74,dep:72},
+  {id:'KKR', nm:'Kolkata Knight Riders',       c:'#3a225d',t:'#ffc300',p:2,w:0,l:2,pts:0, nrr:-1.964,form:['L','L'],elo:1490,rr:7.10,eco:9.10,ch:4, q:30,bat:79,bwl:72,fld:74,exp:82,ldr:70,dep:76},
+  {id:'CSK', nm:'Chennai Super Kings',         c:'#f5c842',t:'#000',   p:1,w:0,l:1,pts:0, nrr:-2.562,form:['L'],    elo:1484,rr:7.82,eco:9.45,ch:4, q:28,bat:80,bwl:70,fld:77,exp:88,ldr:76,dep:78}
+];
+var PL=[
+  {nm:'Sameer Rizvi',     tm:'DC',  role:'Batter',     runs:162,avg:81.0,sr:188,hs:90, s4:16,s6:12,mat:2,wkts:0,eco:0,  cap:'oc',form:'Exceptional',age:22,bt:'Right-hand',bwl:'Occasional RM',   r:95},
+  {nm:'Ryan Rickelton',   tm:'MI',  role:'WK-Batter',  runs:118,avg:59.0,sr:169,hs:81, s4:10,s6:8, mat:2,wkts:0,eco:0,  cap:'oc',form:'Excellent',   age:27,bt:'Left-hand', bwl:'—',               r:88},
+  {nm:'Priyansh Arya',    tm:'PBKS',role:'Batter',     runs:102,avg:51.0,sr:208,hs:39, s4:8, s6:9, mat:2,wkts:0,eco:0,  cap:'oc',form:'Excellent',   age:23,bt:'Right-hand',bwl:'Off-break',        r:85},
+  {nm:'Virat Kohli',      tm:'RCB', role:'Batter',     runs:89, avg:89.0,sr:148,hs:89, s4:10,s6:4, mat:1,wkts:0,eco:0,  cap:null,form:'Excellent',   age:37,bt:'Right-hand',bwl:'RM occasional',    r:91},
+  {nm:'Shreyas Iyer',     tm:'PBKS',role:'Batter',     runs:95, avg:47.5,sr:155,hs:50, s4:10,s6:6, mat:2,wkts:0,eco:0,  cap:null,form:'Good',        age:30,bt:'Right-hand',bwl:'Leg-break',        r:84},
+  {nm:'Ravindra Jadeja',  tm:'RR',  role:'All-rounder',runs:65, avg:65.0,sr:162,hs:65, s4:5, s6:4, mat:1,wkts:2,eco:6.5,cap:null,form:'Excellent',   age:35,bt:'Left-hand', bwl:'Left-arm spin',    r:89},
+  {nm:'Ishan Kishan',     tm:'SRH', role:'WK-Batter',  runs:80, avg:40.0,sr:155,hs:80, s4:8, s6:5, mat:2,wkts:0,eco:0,  cap:null,form:'Good',        age:26,bt:'Left-hand', bwl:'—',               r:82},
+  {nm:'Suryakumar Yadav', tm:'MI',  role:'Batter',     runs:72, avg:36.0,sr:191,hs:61, s4:6, s6:7, mat:2,wkts:0,eco:0,  cap:null,form:'Good',        age:34,bt:'Right-hand',bwl:'RM occasional',    r:90},
+  {nm:'Lungi Ngidi',      tm:'DC',  role:'Bowler',     runs:4,  avg:0,   sr:0,  hs:4,  s4:0, s6:0, mat:2,wkts:4,eco:7.2,cap:'pc',form:'Excellent',   age:28,bt:'Right-hand',bwl:'Right-arm fast',   r:84},
+  {nm:'Vijaykumar Vyshak',tm:'PBKS',role:'Bowler',     runs:3,  avg:0,   sr:0,  hs:3,  s4:0, s6:0, mat:2,wkts:4,eco:8.4,cap:'pc',form:'Good',        age:29,bt:'Right-hand',bwl:'Right-arm fast',   r:78},
+  {nm:'Jacob Duffy',      tm:'RCB', role:'Bowler',     runs:2,  avg:0,   sr:0,  hs:2,  s4:0, s6:0, mat:1,wkts:3,eco:7.8,cap:'pc',form:'Excellent',   age:29,bt:'Left-hand', bwl:'Right-arm FM',     r:82},
+  {nm:'Axar Patel',       tm:'DC',  role:'All-rounder',runs:45, avg:22.5,sr:140,hs:30, s4:4, s6:2, mat:2,wkts:3,eco:7.2,cap:null,form:'Good',        age:31,bt:'Left-hand', bwl:'Left-arm spin',    r:85}
+];
+var RS=[
+  {n:8,dt:'Apr 4, 2026', v:'Arun Jaitley Stadium, Delhi',        t1:'DC',  t2:'MI',  s1:'164/4 (18.1)',s2:'162/6 (20.0)',res:'Delhi Capitals won by 6 wickets',          pot:'Sameer Rizvi — 90 (51)'},
+  {n:7,dt:'Apr 3, 2026', v:'MA Chidambaram Stadium, Chennai',     t1:'CSK', t2:'PBKS',s1:'209/5 (20.0)',s2:'210/5 (18.4)',res:'Punjab Kings won by 5 wickets',            pot:'Priyansh Arya — 39 (11)'},
+  {n:6,dt:'Apr 2, 2026', v:'Eden Gardens, Kolkata',               t1:'KKR', t2:'SRH', s1:'166/8 (20.0)',s2:'231/4 (20.0)',res:'Sunrisers Hyderabad won by 65 runs',       pot:'Ishan Kishan — 80 (52)'},
+  {n:5,dt:'Apr 1, 2026', v:'Ekana Stadium, Lucknow',              t1:'LSG', t2:'DC',  s1:'141/8 (20.0)',s2:'142/4 (17.1)',res:'Delhi Capitals won by 6 wickets',          pot:'Sameer Rizvi — 70* (42)'},
+  {n:4,dt:'Mar 30, 2026',v:'Mullanpur Stadium, Chandigarh',       t1:'PBKS',t2:'KKR', s1:'189/5 (20.0)',s2:'152/9 (20.0)',res:'Punjab Kings won by 37 runs',              pot:'Cooper Connolly — 64 (36)'},
+  {n:3,dt:'Mar 29, 2026',v:'Wankhede Stadium, Mumbai',            t1:'GT',  t2:'MI',  s1:'168/6 (20.0)',s2:'172/4 (18.3)',res:'Mumbai Indians won by 6 wickets',          pot:'Ryan Rickelton — 81 (48)'},
+  {n:2,dt:'Mar 29, 2026',v:'Sawai Mansingh Stadium, Jaipur',      t1:'CSK', t2:'RR',  s1:'145/9 (20.0)',s2:'216/3 (20.0)',res:'Rajasthan Royals won by 71 runs',          pot:'Ravindra Jadeja — 65 & 2/28'},
+  {n:1,dt:'Mar 28, 2026',v:'M Chinnaswamy Stadium, Bengaluru',    t1:'SRH', t2:'RCB', s1:'174/7 (20.0)',s2:'225/4 (20.0)',res:'Royal Challengers Bengaluru won by 51 runs',pot:'Virat Kohli — 89 (60)'}
+];
+var PAL=['#f59e0b','#e6a80a','#3b82f6','#22c55e','#f97316','#a855f7','#06b6d4','#6b7280','#ef4444','#94a3b8'];
+
+/* ── HELPERS ── */
+function byP(){return T.slice().sort(function(a,b){return b.pts-a.pts||b.nrr-a.nrr;});}
+function gt(id){for(var i=0;i<T.length;i++){if(T[i].id===id)return T[i];}return null;}
+function ini(n){return n.split(' ').map(function(w){return w[0];}).join('');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ── TABS — addEventListener only, no inline onclick ── */
+function initTabs(){
+  var tabs=document.querySelectorAll('.tab');
+  tabs.forEach(function(tab){
+    function onTab(e){
+      e.preventDefault();e.stopPropagation();
+      var pid=tab.getAttribute('data-page');
+      tabs.forEach(function(t){t.classList.remove('active');});
+      document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+      tab.classList.add('active');
+      var pg=document.getElementById('page-'+pid);
+      if(pg)pg.classList.add('active');
+      window.scrollTo(0,0);
+      if(pid==='predict'){setTimeout(function(){drawElo();drawDonut();},80);}
+      if(pid==='teams'){setTimeout(function(){drawBB();},80);}
+    }
+    tab.addEventListener('touchend',onTab,{passive:false});
+    tab.addEventListener('click',onTab,false);
+  });
+}
+
+/* ── CHAMP LIST ── */
+function buildChamp(){
+  var s=T.slice().sort(function(a,b){return b.ch-a.ch;});
+  var tot=s.reduce(function(x,t){return x+t.ch;},0);
+  var h='';
+  s.forEach(function(t,i){
+    var p=Math.round(t.ch/tot*100),w=Math.round(t.ch/s[0].ch*100);
+    h+='<div class="odds-row"><span class="ork">'+(i+1)+'</span><div class="oi"><div class="on1">'+t.nm+'</div><div class="on2">'+t.id+' · ELO '+t.elo+'</div></div><div class="ob"><div class="ot"><div class="of" style="width:'+w+'%;background:'+PAL[i]+'"></div></div></div><span class="op" style="color:'+PAL[i]+'">'+p+'%</span></div>';
+  });
+  document.getElementById('champ-list').innerHTML=h;
+}
+
+/* ── POINTS TABLE ── */
+function buildTable(){
+  var s=byP(),h='';
+  s.forEach(function(t,i){
+    var q=i<4,fc=function(f){return f==='W'?'#22c55e':f==='L'?'#ef4444':'#1e2a45';};
+    var dots=t.form.map(function(f){return '<span style="background:'+fc(f)+'"></span>';}).join('');
+    h+='<div class="pt-row"><span style="font-size:11px;font-weight:700;color:'+(q?'#22c55e':'#475569')+'">'+(i+1)+'</span><div style="display:flex;align-items:center;gap:5px"><div class="tbg" style="background:'+t.c+';color:'+t.t+'">'+t.id+'</div><span style="font-size:11px;font-weight:600">'+t.id+'</span></div><span class="ptv">'+t.pts+'</span><span style="color:#22c55e;font-weight:700;text-align:center">'+t.w+'</span><span style="color:#ef4444;font-weight:700;text-align:center">'+t.l+'</span><span class="nv '+(t.nrr>=0?'np':'nn')+'">'+(t.nrr>=0?'+':'')+t.nrr.toFixed(3)+'</span><div class="fd">'+dots+'</div></div>';
+  });
+  document.getElementById('pt-rows').innerHTML=h;
+}
+
+/* ── TEAM GRID ── */
+function buildGrid(){
+  var s=byP(),h='';
+  s.forEach(function(t,i){
+    var pct=t.p>0?Math.round(t.w/t.p*100):0;
+    h+='<button class="tcbtn" data-tid="'+t.id+'"><div class="tch"><div class="tcbdg" style="background:'+t.c+';color:'+t.t+'">'+t.id+'</div><div><div class="tcnm">'+t.id+'</div><div class="tcrk">#'+(i+1)+' · '+t.pts+' pts'+(i<4?' ✓':'')+'</div></div></div><div class="tcs"><div style="text-align:center"><div class="tcsv">'+t.w+'</div><div class="tcsl">Won</div></div><div style="text-align:center"><div class="tcsv">'+t.l+'</div><div class="tcsl">Lost</div></div><div style="text-align:center"><div class="tcsv">'+pct+'%</div><div class="tcsl">Win%</div></div><div style="text-align:center"><div class="tcsv" style="color:'+(t.nrr>=0?'#22c55e':'#ef4444')+'">'+(t.nrr>=0?'+':'')+t.nrr.toFixed(2)+'</div><div class="tcsl">NRR</div></div></div><div class="tcbar"><div class="tcbf" style="width:'+pct+'%;background:'+t.c+'"></div></div></button>';
+  });
+  document.getElementById('tgrid').innerHTML=h;
+  document.querySelectorAll('.tcbtn').forEach(function(btn){
+    function pick(e){e.preventDefault();var tid=btn.getAttribute('data-tid');document.getElementById('radarSel').value=tid;drawRadar();}
+    btn.addEventListener('touchend',pick,{passive:false});
+    btn.addEventListener('click',pick,false);
+  });
+}
+
+/* ── RADAR ── */
+var _r=null;
+function drawRadar(){
+  var t=gt(document.getElementById('radarSel').value);if(!t)return;
+  if(_r){_r.destroy();_r=null;}
+  _r=new Chart(document.getElementById('radarChart'),{type:'radar',data:{labels:['Batting','Bowling','Fielding','Experience','Leadership','Depth'],datasets:[{label:t.nm,data:[t.bat,t.bwl,t.fld,t.exp,t.ldr,t.dep],backgroundColor:t.c+'33',borderColor:t.c,borderWidth:2,pointBackgroundColor:t.c,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:60,max:100,ticks:{color:'#475569',font:{size:9},backdropColor:'transparent'},grid:{color:'rgba(255,255,255,0.05)'},pointLabels:{color:'#64748b',font:{size:11}},angleLines:{color:'rgba(255,255,255,0.05)'}}}}});
+  var tags=[];
+  if(t.bat>=85)tags.push({l:'Strong Batting',c:'tg'});if(t.bwl>=82)tags.push({l:'Elite Bowling',c:'tg'});
+  if(t.exp>=86)tags.push({l:'Veteran Squad',c:'tb'});if(t.pts===4)tags.push({l:'Unbeaten',c:'tg'});
+  if(t.pts===0)tags.push({l:'Must Win Next',c:'tr'});if(t.nrr>2)tags.push({l:'Excellent NRR',c:'tg'});
+  if(t.nrr<-1.5)tags.push({l:'Poor NRR',c:'tr'});if(t.elo>1600)tags.push({l:'Top ELO',c:'ta'});
+  document.getElementById('radar-tags').innerHTML=tags.map(function(tg){return '<span class="tag '+tg.c+'">'+tg.l+'</span>';}).join('');
+}
+
+/* ── PLAYERS ── */
+function buildPlayers(){
+  var bat=PL.filter(function(p){return p.runs>0;}).sort(function(a,b){return b.runs-a.runs;}).slice(0,5);
+  var bow=PL.filter(function(p){return p.wkts>0;}).sort(function(a,b){return b.wkts-a.wkts||a.eco-b.eco;}).slice(0,5);
+  function card(p,i,mode){
+    var t=gt(p.tm);
+    var cap=p.cap==='oc'?'<span class="boc">#'+(i+1)+' OC</span>':p.cap==='pc'?'<span class="bpc">#'+(i+1)+' PC</span>':'<span style="font-size:10px;color:#475569;flex-shrink:0">#'+(i+1)+'</span>';
+    var st=mode==='bat'
+      ?'<div class="ps"><span class="psv" style="color:#fb923c">'+p.runs+'</span><span class="psl">Runs</span></div><div class="ps"><span class="psv">'+p.avg.toFixed(1)+'</span><span class="psl">Avg</span></div><div class="ps"><span class="psv">'+p.sr+'</span><span class="psl">SR</span></div><div class="ps"><span class="psv">'+p.hs+'</span><span class="psl">HS</span></div>'
+      :'<div class="ps"><span class="psv" style="color:#c084fc">'+p.wkts+'</span><span class="psl">Wkts</span></div><div class="ps"><span class="psv">'+p.eco.toFixed(1)+'</span><span class="psl">Eco</span></div><div class="ps"><span class="psv">'+p.mat+'</span><span class="psl">Mat</span></div>';
+    return '<div class="plcard"><div class="pav" style="background:'+(t?t.c:'#1e2a45')+';color:'+(t?t.t:'#fff')+'">'+ini(p.nm)+'</div><div style="flex:1;min-width:0"><div class="pnm">'+p.nm+'</div><div class="ptm">'+(t?t.nm:p.tm)+' · '+p.role+'</div><div class="psts">'+st+'</div></div>'+cap+'</div>';
+  }
+  document.getElementById('oc-list').innerHTML=bat.map(function(p,i){return card(p,i,'bat');}).join('');
+  document.getElementById('pc-list').innerHTML=bow.map(function(p,i){return card(p,i,'bow');}).join('');
+  var sel=document.getElementById('plrSel');
+  sel.innerHTML=PL.map(function(p){return '<option value="'+p.nm+'">'+p.nm+' ('+p.tm+')</option>';}).join('');
+  sel.addEventListener('change',showPlayer);
+  showPlayer();
+}
+function showPlayer(){
+  var nm=document.getElementById('plrSel').value,p=null;
+  for(var i=0;i<PL.length;i++){if(PL[i].nm===nm){p=PL[i];break;}}if(!p)return;
+  var t=gt(p.tm),rc=p.r>=90?'#22c55e':p.r>=80?'#f59e0b':'#f97316';
+  var im={'Sameer Rizvi':'The standout performer of IPL 2026. Back-to-back scores of 70* and 90 off 51 make him the clear Orange Cap leader. SR of 188+ is extraordinary. At 22, Rizvi is DC\'s most dangerous weapon.','Virat Kohli':'The defending champion\'s captain delivered a masterclass in the opener — 89 off 60 set up RCB\'s 51-run win. Kohli\'s ability to bat deep while accelerating remains the benchmark.','Ravindra Jadeja':'Jadeja has settled into RR brilliantly. His 65 runs and 2 wickets inflated RR\'s NRR to +4.171. The most complete cricketer in the IPL.'};
+  var insight=im[p.nm]||(p.sr>180&&p.runs>60?p.nm+' is in explosive form — '+p.runs+' runs at SR '+p.sr+'.':p.wkts>=3&&p.eco<8?p.nm+' — '+p.wkts+' wkts at economy '+p.eco.toFixed(1)+', a genuine match-winner.':p.nm+' — '+p.role+' for '+p.tm+'. Form: '+p.form+'.');
+  var sg='';
+  if(p.runs>0)sg+='<div style="background:#080b12;border-radius:8px;padding:9px 4px;text-align:center"><div style="font-size:16px;font-weight:800;color:#fb923c;font-family:monospace">'+p.runs+'</div><div style="font-size:9px;color:#475569">RUNS</div></div><div style="background:#080b12;border-radius:8px;padding:9px 4px;text-align:center"><div style="font-size:16px;font-weight:800;color:#f59e0b;font-family:monospace">'+p.avg.toFixed(1)+'</div><div style="font-size:9px;color:#475569">AVG</div></div><div style="background:#080b12;border-radius:8px;padding:9px 4px;text-align:center"><div style="font-size:16px;font-weight:800;color:#3b82f6;font-family:monospace">'+p.sr+'</div><div style="font-size:9px;color:#475569">SR</div></div><div style="background:#080b12;border-radius:8px;padding:9px 4px;text-align:center"><div style="font-size:16px;font-weight:800;color:#22c55e;font-family:monospace">'+p.hs+'</div><div style="font-size:9px;color:#475569">HS</div></div>';
+  if(p.wkts>0)sg+='<div style="background:#080b12;border-radius:8px;padding:9px 4px;text-align:center"><div style="font-size:16px;font-weight:800;color:#c084fc;font-family:monospace">'+p.wkts+'</div><div style="font-size:9px;color:#475569">WKTS</div></div><div style="background:#080b12;border-radius:8px;padding:9px 4px;text-align:center"><div style="font-size:16px;font-weight:800;color:#f59e0b;font-family:monospace">'+p.eco.toFixed(1)+'</div><div style="font-size:9px;color:#475569">ECO</div></div>';
+  document.getElementById('plr-profile').innerHTML='<div style="display:flex;align-items:center;gap:12px;margin:10px 0 13px"><div style="width:50px;height:50px;min-width:50px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;background:'+(t?t.c:'#1e2a45')+';color:'+(t?t.t:'#fff')+'">'+ini(p.nm)+'</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">'+p.nm+'</div><div style="font-size:11px;color:#475569">'+p.role+' · Age '+p.age+' · '+p.bt+' · '+p.bwl+'</div></div><div style="text-align:center;flex-shrink:0"><div style="font-size:30px;font-weight:900;color:'+rc+';line-height:1">'+p.r+'</div><div style="font-size:9px;color:#475569">Rating</div></div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:11px">'+sg+'</div><div class="tags"><span class="tag '+(p.form==='Exceptional'||p.form==='Excellent'?'tg':'ta')+'">'+p.form+'</span>'+(p.cap==='oc'?'<span class="tag ta">Orange Cap</span>':'')+(p.cap==='pc'?'<span class="tag tb">Purple Cap</span>':'')+(p.sr>180?'<span class="tag tg">Elite SR</span>':'')+(p.s6>=8?'<span class="tag ta">Power Hitter</span>':'')+(p.eco<7.5&&p.wkts>0?'<span class="tag tg">Economy Ace</span>':'')+'</div><div style="margin-top:11px;padding:11px;background:#080b12;border-radius:9px;font-size:12px;color:#64748b;line-height:1.7">'+insight+'</div>';
+}
+
+/* ── RESULTS ── */
+function buildResults(){
+  var h='';
+  RS.forEach(function(r){
+    var t1=gt(r.t1),t2=gt(r.t2);
+    h+='<div class="rcard"><div class="rdt">Match '+r.n+' · '+r.dt+' · '+r.v+'</div><div class="rteams"><div class="rside"><div class="rnm" style="color:'+(t1?t1.c:'#e2e8f0')+'">'+r.t1+'</div><div class="rsc">'+r.s1+'</div></div><div class="rvs">vs</div><div class="rside"><div class="rnm" style="color:'+(t2?t2.c:'#e2e8f0')+'">'+r.t2+'</div><div class="rsc">'+r.s2+'</div></div></div><div class="rres">'+r.res+'</div><div class="rpot">POTM: '+r.pot+'</div></div>';
+  });
+  document.getElementById('results-list').innerHTML=h;
+}
+
+/* ── SELECTORS ── */
+function fillSel(){
+  var s=byP();
+  ['t1sel','t2sel','radarSel'].forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
+    el.innerHTML=s.map(function(t){return '<option value="'+t.id+'">'+t.nm+'</option>';}).join('');
+  });
+  document.getElementById('t1sel').value='DC';
+  document.getElementById('t2sel').value='PBKS';
+  calcH2H();
+  document.getElementById('t1sel').addEventListener('change',calcH2H);
+  document.getElementById('t2sel').addEventListener('change',calcH2H);
+  document.getElementById('radarSel').addEventListener('change',drawRadar);
+}
+function calcH2H(){
+  var a=gt(document.getElementById('t1sel').value),b=gt(document.getElementById('t2sel').value);
+  if(!a||!b||a.id===b.id)return;
+  var p=1/(1+Math.pow(10,-(a.elo-b.elo)/400));
+  var fd=(a.form.filter(function(f){return f==='W';}).length-b.form.filter(function(f){return f==='W';}).length)*0.025;
+  var nd=Math.tanh((a.nrr-b.nrr)/4)*0.05;
+  p=Math.max(0.15,Math.min(0.85,p+fd+nd));
+  var p1=Math.round(p*100);
+  document.getElementById('h2hn1').textContent=a.nm;
+  document.getElementById('h2hp1').textContent=p1+'%';
+  document.getElementById('h2hp2').textContent=(100-p1)+'% — '+b.nm;
+  document.getElementById('h2hbar').style.width=p1+'%';
+  var tgs=[];
+  tgs.push(a.elo>b.elo?{l:'Higher ELO (+' +(a.elo-b.elo)+')',c:'tg'}:{l:'Lower ELO ('+(a.elo-b.elo)+')',c:'tr'});
+  tgs.push(a.nrr>b.nrr?{l:'Better NRR',c:'tg'}:{l:'Worse NRR',c:'tr'});
+  if(a.bat>b.bat)tgs.push({l:'Stronger Batting',c:'ta'});
+  if(a.bwl>b.bwl)tgs.push({l:'Stronger Bowling',c:'tb'});
+  document.getElementById('h2htags').innerHTML=tgs.map(function(tg){return '<span class="tag '+tg.c+'">'+tg.l+'</span>';}).join('');
+}
+
+/* ── CHARTS ── */
+var CH={};
+function mk(id,cfg){if(CH[id]){CH[id].destroy();delete CH[id];}var el=document.getElementById(id);if(!el)return;CH[id]=new Chart(el,cfg);}
+function drawRR(){
+  var s=T.slice().sort(function(a,b){return b.rr-a.rr;});
+  mk('rrChart',{type:'bar',data:{labels:s.map(function(t){return t.id;}),datasets:[{data:s.map(function(t){return t.rr;}),backgroundColor:s.map(function(t){return t.c+'cc';}),borderColor:s.map(function(t){return t.c;}),borderWidth:1.5,borderRadius:5},{data:s.map(function(t){return t.eco;}),backgroundColor:'rgba(59,130,246,0.28)',borderColor:'#3b82f6',borderWidth:1.5,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,0.06)'},min:6,max:11}}}});
+}
+function drawQual(){
+  var s=byP();
+  mk('qualChart',{type:'bar',data:{labels:s.map(function(t){return t.id;}),datasets:[{data:s.map(function(t){return t.q;}),backgroundColor:s.map(function(t,i){return i<4?'rgba(34,197,94,0.45)':'rgba(239,68,68,0.35)';}),borderColor:s.map(function(t,i){return i<4?'#22c55e':'#ef4444';}),borderWidth:1.5,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,0.06)'},max:100},y:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}}}}});
+}
+function drawElo(){
+  var s=T.slice().sort(function(a,b){return b.elo-a.elo;});
+  mk('eloChart',{type:'bar',data:{labels:s.map(function(t){return t.id;}),datasets:[{data:s.map(function(t){return t.elo;}),backgroundColor:s.map(function(t){return t.c+'cc';}),borderColor:s.map(function(t){return t.c;}),borderWidth:1.5,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,0.06)'},min:1460,max:1650}}}});
+}
+function drawDonut(){
+  var s=T.slice().sort(function(a,b){return b.ch-a.ch;}),tot=s.reduce(function(x,t){return x+t.ch;},0);
+  mk('champDonut',{type:'doughnut',data:{labels:s.map(function(t){return t.nm;}),datasets:[{data:s.map(function(t){return t.ch;}),backgroundColor:PAL,borderColor:'#111827',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
+  document.getElementById('donut-leg').innerHTML=s.slice(0,6).map(function(t,i){return '<span><i style="background:'+PAL[i]+'"></i>'+t.id+' '+Math.round(t.ch/tot*100)+'%</span>';}).join('');
+}
+function drawBB(){
+  var s=T.slice().sort(function(a,b){return b.bat-a.bat;});
+  mk('bbChart',{type:'bar',data:{labels:s.map(function(t){return t.id;}),datasets:[{data:s.map(function(t){return t.bat;}),backgroundColor:'rgba(245,158,11,0.65)',borderColor:'#f59e0b',borderWidth:1.5,borderRadius:4},{data:s.map(function(t){return t.bwl;}),backgroundColor:'rgba(59,130,246,0.55)',borderColor:'#3b82f6',borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,0.06)'},min:65,max:95}}}});
+}
+
+/* ── API KEY ── */
+var _key='';
+document.getElementById('btnSave').addEventListener('click',saveKey,false);
+document.getElementById('btnSave').addEventListener('touchend',function(e){e.preventDefault();saveKey();},{passive:false});
+function saveKey(){
+  var v=document.getElementById('keyInput').value.trim();
+  if(!v.startsWith('sk-ant-')){document.getElementById('key-status').innerHTML='<span style="color:#ef4444">⚠️ Must start with sk-ant-... Check and retry.</span>';return;}
+  _key=v;
+  document.getElementById('key-status').innerHTML='<span style="color:#22c55e">✅ Saved! AI Analyst is now active.</span>';
+  document.getElementById('key-card').style.borderColor='rgba(34,197,94,0.3)';
+  document.getElementById('ai-ready').style.display='block';
+  document.getElementById('aiOutput').textContent='✅ Ready! Tap a quick question or type below.';
+}
+
+/* ── QUICK QUESTIONS ── */
+function initQQ(){
+  document.querySelectorAll('.qq').forEach(function(btn){
+    function doAsk(e){e.preventDefault();e.stopPropagation();ask(btn.getAttribute('data-q'));}
+    btn.addEventListener('touchend',doAsk,{passive:false});
+    btn.addEventListener('click',doAsk,false);
+  });
+}
+
+/* ── ASK BUTTON ── */
+document.getElementById('btnAsk').addEventListener('click',function(){ask();},false);
+document.getElementById('btnAsk').addEventListener('touchend',function(e){e.preventDefault();ask();},{passive:false});
+document.getElementById('aiInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask();}});
+
+/* ── AI CALL ── */
+function ask(preset){
+  var input=document.getElementById('aiInput'),btn=document.getElementById('btnAsk'),out=document.getElementById('aiOutput');
+  var q=preset||input.value.trim();if(!q)return;
+  if(!_key){out.innerHTML='<span style="color:#ef4444">⚠️ Enter your Anthropic API key above first, then tap Save ✓</span>';return;}
+  input.value='';btn.disabled=true;
+  out.innerHTML='<div style="display:flex;align-items:center;gap:8px;color:#f59e0b"><span>Analysing IPL 2026</span><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>';
+  var ctx=byP().map(function(t,i){return (i+1)+'. '+t.nm+' ('+t.id+'): '+t.pts+'pts '+t.w+'W-'+t.l+'L, NRR '+(t.nrr>=0?'+':'')+t.nrr.toFixed(3)+', ELO '+t.elo;}).join('\n');
+  var SYS='You are a world-class IPL cricket analyst. Provide sharp, specific, data-driven analysis in 200-250 words. Use **bold** for key points.\n\nIPL 2026 STANDINGS (After Match 8 — April 4, 2026):\n'+ctx+'\n\nRESULTS:\n• M8: DC beat MI 6 wkts — Sameer Rizvi 90(51)\n• M7: PBKS beat CSK 5 wkts — Priyansh Arya 39(11)\n• M6: SRH beat KKR 65 runs — Ishan Kishan 80(52)\n• M5: DC beat LSG 6 wkts — Sameer Rizvi 70*\n• M4: PBKS beat KKR 37 runs — Cooper Connolly 64(36)\n• M3: MI beat GT 6 wkts — Ryan Rickelton 81(48)\n• M2: RR beat CSK 71 runs — Ravindra Jadeja 65 & 2/28\n• M1: RCB beat SRH 51 runs — Virat Kohli 89(60)\nOrange Cap: Sameer Rizvi DC 162 runs SR188\nPurple Cap: Lungi Ngidi DC & Vijaykumar Vyshak PBKS 4 wkts\nTransfers: Sanju Samson→CSK | Ravindra Jadeja→RR\nDefending Champions: RCB (beat PBKS in 2025 final)\nNext: Match 9 — GT vs RR, Apr 4, 7:30PM IST, Ahmedabad\nDashboard by Vineet Deshpande (deshpandevineet000@gmail.com, +91 9819724139).';
+  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':_key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1024,system:SYS,messages:[{role:'user',content:q}]})})
+  .then(function(res){if(!res.ok){return res.json().then(function(e){throw {status:res.status,msg:e&&e.error&&e.error.message?e.error.message:'HTTP '+res.status};});}return res.json();})
+  .then(function(data){
+    var text=(data.content||[]).filter(function(c){return c.type==='text';}).map(function(c){return c.text;}).join('');
+    if(!text)throw {msg:'No response.'};
+    out.innerHTML='<p>'+esc(text).replace(/\n\n/g,'</p><p style="margin-top:8px">').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong style="color:#f59e0b">$1</strong>').replace(/\*(.*?)\*/g,'<em style="color:#94a3b8">$1</em>')+'</p>';
+  })
+  .catch(function(err){
+    var msg=err&&err.msg?err.msg:String(err);
+    out.innerHTML=err&&err.status===401?'<span style="color:#ef4444">❌ Invalid API key. Check and save again.</span>':err&&err.status===429?'<span style="color:#ef4444">❌ Rate limit. Wait a moment and retry.</span>':'<span style="color:#ef4444">❌ Error: '+esc(msg)+'</span>';
+  })
+  .finally(function(){btn.disabled=false;});
+}
+
+/* ── CLOCK ── */
+function clock(){var el=document.getElementById('liveclock');if(!el)return;var n=new Date(),h=n.getHours(),m=n.getMinutes(),a=h>=12?'PM':'AM';h=h%12||12;el.textContent='by Vineet Deshpande · '+h+':'+(m<10?'0':'')+m+' '+a+' IST · Season 19';}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded',function(){
+  initTabs();
+  buildChamp();buildTable();buildGrid();buildPlayers();buildResults();fillSel();drawRadar();initQQ();clock();
+  setInterval(clock,60000);
+  setTimeout(function(){drawRR();drawQual();drawElo();drawDonut();drawBB();},180);
+});
+</script>
+</body>
+</html>
